@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>HUD Minecraft TV</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: url('fundo.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-sizing: border-box;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: 1;
+        }
+        .conteudo {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 50px;
+            box-sizing: border-box;
+            justify-content: center;
+        }
+        h1 {
+            color: #ffffff;
+            font-size: 34px;
+            text-shadow: 3px 3px #000;
+            margin: 0 0 50px 0;
+        }
+        
+        .carrossel-wrapper {
+            width: 100%;
+            height: 350px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .carrossel {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            transform-style: preserve-3d;
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        
+        .card {
+            width: 200px;
+            height: 200px;
+            background: rgba(30, 30, 30, 0.85);
+            border: 6px solid #373737;
+            outline: 2px solid #111;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            filter: blur(5px) brightness(0.6);
+            transform: scale(0.75) translateZ(-80px);
+            opacity: 0.7;
+        }
+
+        .card.selecionado {
+            width: 440px;
+            height: 245px;
+            filter: blur(0px) brightness(1);
+            transform: scale(1) translateZ(0px);
+            border-color: #8b8b8b;
+            outline: 3px solid #fff;
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.35);
+            opacity: 1;
+            z-index: 10;
+        }
+
+        .card img {
+            width: 110px;
+            height: 110px;
+            object-fit: cover;
+            transition: all 0.5s ease;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.8));
+        }
+
+        .card.selecionado img {
+            width: 140px;
+            height: 90px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+
+        .card span {
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 2px 2px #000;
+            margin-top: 10px;
+            transition: opacity 0.3s ease;
+        }
+
+        .rodape {
+            position: absolute;
+            bottom: 30px;
+            left: 50px;
+            right: 50px;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        .info-ip-bar {
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid #373737;
+            padding: 12px 20px;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 16px;
+            text-shadow: 1px 1px #000;
+        }
+        .qr-discreto {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 6px;
+            border: 3px solid #373737;
+            border-radius: 4px;
+        }
+        .qr-discreto img {
+            width: 75px;
+            height: 75px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="overlay"></div>
+
+    <div class="conteudo">
+        <h1>Central Multimídia do Quarto</h1>
+
+        <div class="carrossel-wrapper">
+            <div class="carrossel" id="track">
+                <div class="card selecionado" onclick="tocarSomClique(); executarApp('netflix://', 'https://www.netflix.com')">
+                    <img src="netflix.png" alt="Netflix">
+                    <span>Netflix</span>
+                </div>
+                <div class="card" onclick="tocarSomClique(); executarApp('primevideo://', 'https://www.primevideo.com')">
+                    <img src="prime.png" alt="Prime Video">
+                    <span>Prime Video</span>
+                </div>
+                <div class="card" onclick="tocarSomClique(); executarApp('disneyplus://', 'https://www.disneyplus.com')">
+                    <img src="disney.png" alt="Disney+">
+                    <span>Disney+</span>
+                </div>
+                <div class="card" onclick="tocarSomClique(); executarApp('youtube://', 'https://www.youtube.com')">
+                    <img src="youtube.png" alt="YouTube">
+                    <span>YouTube</span>
+                </div>
+                <div class="card" onclick="tocarSomClique(); window.location.href='https://www.mercadolivre.com.br/l/mercadoplay'">
+                    <img src="mercadoplay.png" alt="Mercado Play">
+                    <span>Mercado Play</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="rodape">
+            <div class="info-ip-bar">
+                Escaneie o QR Code ao lado ou acesse pelo celular.
+            </div>
+            <div class="qr-discreto">
+                <img id="qr-img" src="" alt="QR">
+            </div>
+        </div>
+    </div>
+
+    <!-- Dois sons diferentes: Navegar (passar) e Clicar (selecionar) -->
+    <audio id="som-passar" src="passar.mp3"></audio>
+    <audio id="som-click" src="click.mp3"></audio>
+
+    <script>
+        let indiceAtual = 0;
+        const cards = document.querySelectorAll('.card');
+        const totalCards = cards.length;
+
+        function tocarSomPassar() {
+            var audio = document.getElementById('som-passar');
+            if(audio) { audio.currentTime = 0; audio.play().catch(e => {}); }
+        }
+
+        function tocarSomClique() {
+            var audio = document.getElementById('som-click');
+            if(audio) { audio.currentTime = 0; audio.play().catch(e => {}); }
+        }
+
+        function atualizarCarrossel() {
+            cards.forEach((card, index) => {
+                if (index === indiceAtual) {
+                    card.classList.add('selecionado');
+                } else {
+                    card.classList.remove('selecionado');
+                }
+            });
+            const track = document.getElementById('track');
+            const deslocamento = (indiceAtual * -250); 
+            track.style.transform = `translateX(${deslocamento}px)`;
+        }
+
+        function selecionar(index) {
+            tocarSomClique();
+            indiceAtual = index;
+            atualizarCarrossel();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                tocarSomPassar(); // Som sutil ao passar
+                indiceAtual = (indiceAtual + 1) % totalCards;
+                atualizarCarrossel();
+            } else if (e.key === 'ArrowLeft') {
+                tocarSomPassar(); // Som sutil ao passar
+                indiceAtual = (indiceAtual - 1 + totalCards) % totalCards;
+                atualizarCarrossel();
+            } else if (e.key === 'Home') {
+                // Atalho para voltar ao app principal / home
+                indiceAtual = 0;
+                atualizarCarrossel();
+            } else if (e.key === 'Enter' || e.key === ' ') {
+                cards[indiceAtual].click();
+            }
+        });
+
+        function executarApp(protocoloUri, urlWeb) {
+            window.location.href = protocoloUri;
+            setTimeout(() => { window.location.href = urlWeb; }, 600);
+        }
+
+        fetch('qrcode_cache.txt')
+            .then(res => res.text())
+            .then(base64 => {
+                document.getElementById('qr-img').src = "data:image/png;base64," + base64.trim();
+            }).catch(() => {});
+    </script>
+</body>
+</html>
